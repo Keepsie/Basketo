@@ -4,33 +4,34 @@ project(BasketoGameEngine)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(SDL2 REQUIRED)
-
-find_package(PkgConfig REQUIRED)
-
-set(LUA_INCLUDE_DIR /usr/include/lua5.4 CACHE PATH "Path to Lua 5.4 include directory")
-
-find_package(Lua 5.4 REQUIRED)
 
 add_subdirectory(vendor/sol2)
 
-pkg_check_modules(SDL2_IMAGE REQUIRED SDL2_image)
-include_directories(${SDL2_IMAGE_INCLUDE_DIRS})
-link_directories(${SDL2_IMAGE_LIBRARY_DIRS})
+set(SDL2_INCLUDE_DIRS "C:/Libraries/SDL2")
+set(SDL2_LIBRARIES "C:/Libraries/SDL2/SDL2.lib" "C:/Libraries/SDL2/SDL2main.lib")
 
-pkg_check_modules(SDL2_TTF REQUIRED SDL2_ttf)
-include_directories(${SDL2_TTF_INCLUDE_DIRS})
-link_directories(${SDL2_TTF_LIBRARY_DIRS})
+set(SDL2_IMAGE_INCLUDE_DIRS "C:/Libraries/SDL2_image")
+set(SDL2_IMAGE_LIBRARIES "C:/Libraries/SDL2_image/SDL2_image.lib")
 
-pkg_check_modules(SDL2_MIXER REQUIRED SDL2_mixer)
-include_directories(${SDL2_MIXER_INCLUDE_DIRS})
-link_directories(${SDL2_MIXER_LIBRARY_DIRS})
+set(SDL2_TTF_INCLUDE_DIRS "C:/Libraries/SDL2_ttf")
+set(SDL2_TTF_LIBRARIES "C:/Libraries/SDL2_ttf/SDL2_ttf.lib")
+
+set(SDL2_MIXER_INCLUDE_DIRS "C:/Libraries/SDL2_mixer")
+set(SDL2_MIXER_LIBRARIES "C:/Libraries/SDL2_mixer/SDL2_mixer.lib")
+
+set(LUA_INCLUDE_DIRS "C:/Libraries/Lua/include" CACHE PATH "Path to Lua 5.4 include directory")
+set(LUA_LIBRARIES "C:/Libraries/Lua/lua54.lib" CACHE PATH "Path to Lua 5.4 library")
+
+set(SOL_INCLUDE_DIRS "C:/sol" CACHE PATH "Path to sol2 include directory")
 
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})
-
 include_directories(${SDL2_INCLUDE_DIRS})
-
+include_directories(${SDL2_IMAGE_INCLUDE_DIRS})
+include_directories(${SDL2_TTF_INCLUDE_DIRS})
+include_directories(${SDL2_MIXER_INCLUDE_DIRS})
+include_directories(${LUA_INCLUDE_DIRS})
+include_directories(${SOL_INCLUDE_DIRS})
 include_directories(vendor/imgui)
 include_directories(vendor/libtinyfiledialogs)
 
@@ -90,4 +91,15 @@ target_link_libraries(BasketoGameEngine
 
 target_link_libraries(PhysicsTest
     ${SDL2_LIBRARIES}
+)
+
+
+add_custom_command(TARGET BasketoGameEngine POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "C:/Libraries/SDL2/SDL2.dll"
+        "C:/Libraries/SDL2_image/SDL2_image.dll"
+        "C:/Libraries/SDL2_ttf/SDL2_ttf.dll"
+        "C:/Libraries/SDL2_mixer/SDL2_mixer.dll"
+        "C:/Libraries/Lua/lua54.dll"
+        $<TARGET_FILE_DIR:BasketoGameEngine>
 )
